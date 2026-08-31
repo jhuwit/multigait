@@ -27,7 +27,6 @@ A data frame of per-second cadence estimates.
 Calculate cadence from initial contacts
 }
 \examples{
-\donttest{
 component_imu <- wrist_imu[c("acc_x", "acc_y", "acc_z")]
 names(component_imu) <- c("acc_is", "acc_ml", "acc_pa")
 initial_contacts <- detect_initial_contacts(
@@ -35,5 +34,4 @@ initial_contacts <- detect_initial_contacts(
 )
 cadence <- calculate_cadence(component_imu, initial_contacts, sample_rate = 100)
 head(cadence)
-}
 }

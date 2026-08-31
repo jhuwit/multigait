@@ -18,12 +18,10 @@ A data frame of detected gait sequences.
 Detect gait sequences
 }
 \examples{
-\donttest{
 component_imu <- wrist_imu[c("acc_x", "acc_y", "acc_z")]
 names(component_imu) <- c("acc_is", "acc_ml", "acc_pa")
 gait_sequences <- detect_gait_sequences(
   component_imu, gait_sequence_detector("ionescu", version = "wrist")
 )
 head(gait_sequences)
-}
 }

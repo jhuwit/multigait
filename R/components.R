@@ -18,14 +18,12 @@ gait_sequence_detector <- function(algorithm = c("ionescu", "kheirkhahan", "macl
 #' @param detector A detector returned by [gait_sequence_detector()].
 #' @return A data frame of detected gait sequences.
 #' @examples
-#' \donttest{
 #' component_imu <- wrist_imu[c("acc_x", "acc_y", "acc_z")]
 #' names(component_imu) <- c("acc_is", "acc_ml", "acc_pa")
 #' gait_sequences <- detect_gait_sequences(
 #'   component_imu, gait_sequence_detector("ionescu", version = "wrist")
 #' )
 #' head(gait_sequences)
-#' }
 #' @export
 detect_gait_sequences <- function(data, detector = gait_sequence_detector()) {
   result <- detector$detect(.as_python_data(data))
@@ -52,14 +50,12 @@ initial_contact_detector <- function(algorithm = c("zijlstra", "mccamley", "pham
 #' @param detector An initial-contact detector from [initial_contact_detector()].
 #' @return A data frame of initial contacts.
 #' @examples
-#' \donttest{
 #' component_imu <- wrist_imu[c("acc_x", "acc_y", "acc_z")]
 #' names(component_imu) <- c("acc_is", "acc_ml", "acc_pa")
 #' initial_contacts <- detect_initial_contacts(
 #'   component_imu, initial_contact_detector("zijlstra", version = "wrist")
 #' )
 #' head(initial_contacts)
-#' }
 #' @export
 detect_initial_contacts <- function(data, detector = initial_contact_detector()) {
   result <- detector$detect(.as_python_data(data))
@@ -79,7 +75,6 @@ detect_initial_contacts <- function(data, detector = initial_contact_detector())
 #' @param ... Arguments passed to the Python cadence constructor.
 #' @return A data frame of per-second cadence estimates.
 #' @examples
-#' \donttest{
 #' component_imu <- wrist_imu[c("acc_x", "acc_y", "acc_z")]
 #' names(component_imu) <- c("acc_is", "acc_ml", "acc_pa")
 #' initial_contacts <- detect_initial_contacts(
@@ -87,7 +82,6 @@ detect_initial_contacts <- function(data, detector = initial_contact_detector())
 #' )
 #' cadence <- calculate_cadence(component_imu, initial_contacts, sample_rate = 100)
 #' head(cadence)
-#' }
 #' @export
 calculate_cadence <- function(data, initial_contacts, sample_rate = NULL, ...) {
   sample_rate <- .multigait_sample_rate(data, sample_rate)
