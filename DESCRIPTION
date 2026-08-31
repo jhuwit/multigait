@@ -8,7 +8,7 @@ Description: Provides an R interface to the Python 'MultiGait' package
     sequences, initial contacts, cadence, stride length, walking speed, and
     digital mobility outcomes from wearable inertial-measurement-unit data.
     Both complete, predefined pipelines and modular component functions are
-    available through 'reticulate'.
+    available.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
