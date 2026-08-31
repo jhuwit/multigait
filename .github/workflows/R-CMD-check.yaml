@@ -28,6 +28,9 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
+      # Numba's parallel backend is not needed by the package examples and can
+      # require unavailable OpenMP libraries on hosted runners.
+      NUMBA_DISABLE_OPENMP: "true"
 
     steps:
       - uses: actions/checkout@v6
