@@ -1,2 +1,6 @@
 ^multigait\.Rproj$
 ^\.Rproj\.user$
+^README\.Rmd$
+^\.github$
+^LICENSE\.md$
+^prompt\.md$

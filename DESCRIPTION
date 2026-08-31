@@ -1,15 +1,27 @@
 Package: multigait
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Interface to the 'MultiGait' Wrist-Worn Gait Analysis Pipeline
+Version: 0.1.0
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+    person("John", "Muschelli", , "muschellij2@gmail.com", role = c("aut", "cre"))
+Description: Provides an R interface to the Python 'MultiGait' package
+    <https://github.com/DMegaritis/multigait>, a pipeline for estimating gait
+    sequences, initial contacts, cadence, stride length, walking speed, and
+    digital mobility outcomes from wearable inertial-measurement-unit data.
+    Both complete, predefined pipelines and modular component functions are
+    available through 'reticulate'.
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 8.0.0
 Imports: 
     reticulate
+Suggests:
+    actiread,
+    covr,
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr
+Config/testthat/edition: 3
 URL: https://github.com/jhuwit/multigait
 BugReports: https://github.com/jhuwit/multigait/issues

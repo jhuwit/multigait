@@ -1,0 +1,59 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+# multigait
+
+<!-- badges: start -->
+[![Codecov test coverage](https://codecov.io/gh/jhuwit/multigait/graph/badge.svg)](https://app.codecov.io/gh/jhuwit/multigait)
+[![R-CMD-check](https://github.com/jhuwit/multigait/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/jhuwit/multigait/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
+`multigait` is an R interface to [MultiGait](https://github.com/DMegaritis/multigait),
+a Python pipeline for wrist-worn IMU gait analysis. It provides both complete
+predefined pipelines and modular functions for gait-sequence detection, initial
+contacts, cadence, stride length, walking speed, and walking-bout aggregation.
+
+## Installation
+
+``` r
+remotes::install_github("jhuwit/multigait")
+```
+
+The package calls `py_require_multigait()` when it loads. With current
+`reticulate`, MultiGait is installed into a managed Python environment the first
+time it is needed. Confirm the setup with `have_multigait()`.
+
+## Full pipeline
+
+```{r example, eval = FALSE}
+library(multigait)
+recording <- as_multigait_data(
+  wrist_imu,
+  sampling_rate_hz = 100,
+  participant_metadata = list(height_m = 1.70, arm_length_cm = 65)
+)
+results <- run_multimorbidity_impaired_pipeline(recording)
+results$aggregated
+```
+
+`run_healthy_comorbidity_pipeline()` provides the alternative configuration.
+
+## Modular analysis
+
+```{r modular, eval = FALSE}
+contacts <- detect_initial_contacts(
+  wrist_imu,
+  initial_contact_detector("zijlstra", version = "wrist")
+)
+cadence <- calculate_cadence(wrist_imu, contacts)
+```
+
+See `vignette("multigait")` for an end-to-end workflow and information about
+required sensor fields and participant metadata.
