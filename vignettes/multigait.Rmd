@@ -5,6 +5,7 @@ vignette: >
   %\VignetteIndexEntry{Using MultiGait from R}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{actiread}
 ---
 
 ```{r, include = FALSE}
@@ -24,13 +25,23 @@ g-to-m/s^2 conversion would otherwise be inferred.
 
 ## Python setup
 
-On package load, `multigait` calls `py_require_multigait()`. With reticulate 1.41
-or later, the first function that needs Python creates a managed environment with
-the `multigait` Python package. To confirm availability:
+On package load, `multigait` calls `py_require_multigait()`. This vignette
+checks the required R and Python dependencies before running any analysis.
 
-```{r setup, eval = FALSE}
+```{r setup}
 library(multigait)
-have_multigait()
+stopifnot(
+  requireNamespace("actibase", quietly = TRUE),
+  requireNamespace("actiread", quietly = TRUE),
+  requireNamespace("reticulate", quietly = TRUE),
+  have_multigait()
+)
+```
+
+```{r dependency-details}
+configuration <- reticulate::py_config()
+stopifnot(reticulate::py_module_available("multigait"))
+configuration$python
 ```
 
 Some macOS installations build `numba` from source. If that build cannot find
@@ -39,17 +50,11 @@ toolchain before the first managed-environment resolution.
 
 ## Run a complete pipeline
 
-Prepare one sample per row of body-frame accelerometer data and provide the
-sampling rate and participant information. The exact sensor-axis requirements
-depend on the selected upstream algorithm.
+The bundled `wrist_imu` data were prepared from the `actiread` GT3X fixture.
+They already contain acceleration in m/s^2 with names accepted by MultiGait.
 
-```{r full-pipeline, eval = FALSE}
-raw <- actiread::acti_read_gt3x(actiread::acti_example_gt3x())
-imu <- data.frame(
-  acc_x = raw$X * 9.80665,
-  acc_y = raw$Y * 9.80665,
-  acc_z = raw$Z * 9.80665
-)
+```{r full-pipeline}
+imu <- wrist_imu[c("acc_x", "acc_y", "acc_z")]
 recording <- as_multigait_data(
   imu,
   sample_rate = 100,
@@ -58,15 +63,14 @@ recording <- as_multigait_data(
 )
 
 results <- run_multimorbidity_impaired_pipeline(recording)
-results$aggregated
-results$per_walking_bout
+stopifnot(
+  inherits(results$aggregated, "data.frame"),
+  inherits(results$per_walking_bout, "data.frame"),
+  nrow(results$aggregated) == 1L,
+  nrow(results$per_walking_bout) > 0L
+)
+results$aggregated[, seq_len(min(6L, ncol(results$aggregated))), drop = FALSE]
 ```
-
-When `actiread` is installed, use one of its readers to load its bundled
-wearable examples or your own supported files, then select/rename the required
-body-frame acceleration columns before calling `as_multigait_data()`. This
-keeps the source recordings in the package designed to distribute them rather
-than copying a large fixture into `multigait`.
 
 Use `run_healthy_comorbidity_pipeline()` for the alternative predefined
 configuration. Each result includes the Python pipeline object and R data frames
@@ -76,22 +80,39 @@ walking bouts, and recording-level outcomes.
 ## Adapt individual stages
 
 The components are independently available when a study needs a custom pipeline.
+The modular functions operate on body-frame names, so this example makes that
+conversion explicitly.
 
-```{r components, eval = FALSE}
-detector <- gait_sequence_detector("ionescu", version = "wrist")
-gait_sequences <- detect_gait_sequences(imu, detector)
+```{r components}
+component_imu <- wrist_imu[c("acc_x", "acc_y", "acc_z")]
+names(component_imu) <- c("acc_is", "acc_ml", "acc_pa")
 
-contacts <- detect_initial_contacts(
-  imu,
-  initial_contact_detector("zijlstra", version = "wrist")
+gait_sequences <- detect_gait_sequences(
+  component_imu, gait_sequence_detector("ionescu", version = "wrist")
 )
-cadence <- calculate_cadence(imu, contacts)
+contacts <- detect_initial_contacts(
+  component_imu, initial_contact_detector("zijlstra", version = "wrist")
+)
+cadence <- calculate_cadence(component_imu, contacts, sample_rate = 100)
 stride_length <- calculate_stride_length(
-  imu, contacts,
+  component_imu, contacts,
   stride_length_calculator("weinberg", version = "wrist"),
+  sample_rate = 100,
   participant_metadata = list(arm_length_cm = 65)
 )
-walking_speed <- calculate_walking_speed(imu, cadence, stride_length, contacts)
+walking_speed <- calculate_walking_speed(
+  component_imu, cadence, stride_length, contacts, sample_rate = 100
+)
+stopifnot(
+  inherits(gait_sequences, "data.frame"),
+  inherits(contacts, "data.frame"),
+  inherits(cadence, "data.frame"),
+  inherits(stride_length, "data.frame"),
+  inherits(walking_speed, "data.frame"),
+  nrow(contacts) > 0L,
+  nrow(cadence) > 0L
+)
+head(cadence)
 ```
 
 The wrappers intentionally return ordinary R data frames. Pass a Python object
