@@ -30,13 +30,24 @@ The package calls `py_require_multigait()` when it loads. With current
 `reticulate`, MultiGait is installed into a managed Python environment the first
 time it is needed. Confirm the setup with `have_multigait()`.
 
+`as_multigait_data()` standardizes compatible `X/Y/Z` inputs with `actibase`,
+renames them for MultiGait, and by default converts values that look like g to
+m/s². Set `scale = "none"` when units are already known, or `scale = "error"`
+to require an explicit unit decision.
+
 ## Full pipeline
 
 ```{r example, eval = FALSE}
 library(multigait)
+raw <- actiread::acti_read_gt3x(actiread::acti_example_gt3x())
+wrist_imu <- data.frame(
+  acc_x = raw$X * 9.80665,
+  acc_y = raw$Y * 9.80665,
+  acc_z = raw$Z * 9.80665
+)
 recording <- as_multigait_data(
   wrist_imu,
-  sampling_rate_hz = 100,
+  sample_rate = 100,
   participant_metadata = list(height_m = 1.70, arm_length_cm = 65)
 )
 results <- run_multimorbidity_impaired_pipeline(recording)

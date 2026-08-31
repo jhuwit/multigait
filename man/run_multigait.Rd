@@ -24,8 +24,8 @@ A named list containing \code{pipeline}, \code{gait_sequences},
 Run a MultiGait pipeline
 }
 \examples{
-\dontrun{
-recording <- as_multigait_data(wrist_imu, sampling_rate_hz = 100)
-run_multimorbidity_impaired_pipeline(recording)
-}
+recording <- as_multigait_data(wrist_imu, sample_rate = 100,
+  participant_metadata = list(height_m = 1.70, arm_length_cm = 65))
+results <- run_multigait(recording, multimorbidity_impaired_pipeline())
+results$aggregated
 }

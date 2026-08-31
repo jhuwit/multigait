@@ -9,7 +9,7 @@ calculate_walking_speed(
   cadence,
   stride_length,
   initial_contacts = NULL,
-  sampling_rate_hz = 100
+  sample_rate = NULL
 )
 }
 \arguments{
@@ -21,7 +21,9 @@ calculate_walking_speed(
 
 \item{initial_contacts}{Optional initial-contact data frame.}
 
-\item{sampling_rate_hz}{Sampling frequency in Hertz.}
+\item{sample_rate}{Sampling frequency in Hertz. When \code{NULL}, it is obtained
+from \code{data} with \code{\link[actibase:get_sample_rate]{actibase::get_sample_rate()}}. Supplying it is required
+when \code{data} is \code{NULL}.}
 }
 \value{
 A data frame of per-second walking-speed estimates.

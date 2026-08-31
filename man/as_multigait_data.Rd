@@ -6,7 +6,9 @@
 \usage{
 as_multigait_data(
   data,
-  sampling_rate_hz = 100,
+  sample_rate = NULL,
+  standardize = TRUE,
+  scale = c("guess", "none", "error"),
   participant_metadata = list(),
   recording_metadata = list(),
   participant_id = NULL
@@ -16,7 +18,18 @@ as_multigait_data(
 \item{data}{A data frame of sensor samples, or a compatible Python pandas
 data frame.}
 
-\item{sampling_rate_hz}{Sampling frequency in Hertz.}
+\item{sample_rate}{Sampling frequency in Hertz. When \code{NULL}, the sampling
+rate is obtained with \code{\link[actibase:get_sample_rate]{actibase::get_sample_rate()}}.}
+
+\item{standardize}{Logical; should compatible R data be standardized with
+\code{\link[actibase:acti_standardize_data]{actibase::acti_standardize_data()}}? Defaults to \code{TRUE}. Standardization is
+attempted for data containing \code{X}, \code{Y}, and \code{Z} columns and produces the
+\code{acc_x}, \code{acc_y}, and \code{acc_z} names expected by MultiGait.}
+
+\item{scale}{How to handle likely acceleration units: \code{"guess"} (the
+default) converts values that appear to be in g to m/s^2, \code{"none"} leaves
+values unchanged, and \code{"error"} stops instead of applying an inferred
+conversion. Use \code{"none"} or \code{"error"} when units are known.}
 
 \item{participant_metadata}{Named list containing participant measurements.
 \code{height_m} is used by the default thresholding stage; add \code{foot_length_cm},
@@ -32,6 +45,7 @@ A Python \code{BaseGaitDataset} compatible object.
 \description{
 Creates the lightweight Python dataset object required by MultiGait's
 pipelines. \code{data} should have one row per sample and body-frame accelerometer
-columns (commonly \code{acc_is}, \code{acc_ml}, and \code{acc_pa}). The upstream pipeline
-also recognises compatible axis names and renames them internally.
+columns ending in \verb{_x}, \verb{_y}, and \verb{_z} (for example \code{acc_x}, \code{acc_y}, and
+\code{acc_z}). The upstream pipeline renames these to its body-frame convention
+(\code{acc_is}, \code{acc_ml}, and \code{acc_pa}). Acceleration must be expressed in m/s^2.
 }

@@ -38,10 +38,10 @@ multimorbidity_impaired_pipeline <- function() {
 #'   `initial_contacts`, `per_second`, `per_stride`, `per_walking_bout`, and
 #'   `aggregated` results. Data frames are converted to R.
 #' @examples
-#' \dontrun{
-#' recording <- as_multigait_data(wrist_imu, sampling_rate_hz = 100)
-#' run_multimorbidity_impaired_pipeline(recording)
-#' }
+#' recording <- as_multigait_data(wrist_imu, sample_rate = 100,
+#'   participant_metadata = list(height_m = 1.70, arm_length_cm = 65))
+#' results <- run_multigait(recording, multimorbidity_impaired_pipeline())
+#' results$aggregated
 #' @export
 run_multigait <- function(data, pipeline = multimorbidity_impaired_pipeline(),
                           safe = TRUE) {

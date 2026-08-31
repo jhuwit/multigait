@@ -16,6 +16,12 @@ pipeline through `reticulate`. MultiGait estimates gait sequences, initial conta
 cadence, stride length, walking speed, and walking-bout digital mobility outcomes
 from wrist-worn IMU data.
 
+`as_multigait_data()` uses `actibase::acti_standardize_data()` by default for
+compatible `X/Y/Z` data. It then guesses whether acceleration is in g using the
+typical three-axis magnitude and, when appropriate, converts it to m/s^2. Set
+`scale = "none"` to preserve known units or `scale = "error"` to stop when a
+g-to-m/s^2 conversion would otherwise be inferred.
+
 ## Python setup
 
 On package load, `multigait` calls `py_require_multigait()`. With reticulate 1.41
@@ -38,10 +44,15 @@ sampling rate and participant information. The exact sensor-axis requirements
 depend on the selected upstream algorithm.
 
 ```{r full-pipeline, eval = FALSE}
-imu <- read.csv("wrist_imu.csv")
+raw <- actiread::acti_read_gt3x(actiread::acti_example_gt3x())
+imu <- data.frame(
+  acc_x = raw$X * 9.80665,
+  acc_y = raw$Y * 9.80665,
+  acc_z = raw$Z * 9.80665
+)
 recording <- as_multigait_data(
   imu,
-  sampling_rate_hz = 100,
+  sample_rate = 100,
   participant_metadata = list(height_m = 1.70, arm_length_cm = 65),
   recording_metadata = list()
 )

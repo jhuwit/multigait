@@ -18,5 +18,12 @@ A data frame of initial contacts.
 Detect initial contacts
 }
 \examples{
-\dontrun{detect_initial_contacts(wrist_imu)}
+\donttest{
+component_imu <- wrist_imu[c("acc_x", "acc_y", "acc_z")]
+names(component_imu) <- c("acc_is", "acc_ml", "acc_pa")
+initial_contacts <- detect_initial_contacts(
+  component_imu, initial_contact_detector("zijlstra", version = "wrist")
+)
+head(initial_contacts)
+}
 }

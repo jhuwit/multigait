@@ -4,14 +4,19 @@
 \alias{calculate_cadence}
 \title{Calculate cadence from initial contacts}
 \usage{
-calculate_cadence(data, initial_contacts, sampling_rate_hz = 100, ...)
+calculate_cadence(data, initial_contacts, sample_rate = NULL, ...)
 }
 \arguments{
 \item{data}{Sensor samples as an R data frame or Python pandas data frame.}
 
-\item{initial_contacts}{Initial-contact data frame.}
+\item{initial_contacts}{An event data frame returned by
+\code{\link[=detect_initial_contacts]{detect_initial_contacts()}} for the same recording. It contains one row per
+detected initial contact (foot-strike); the required \code{ic} column gives the
+contact location as a sample index. Do not supply manually created times or
+contacts from a recording with a different \code{sample_rate}.}
 
-\item{sampling_rate_hz}{Sampling frequency in Hertz.}
+\item{sample_rate}{Sampling frequency in Hertz. When \code{NULL}, it is obtained
+from \code{data} with \code{\link[actibase:get_sample_rate]{actibase::get_sample_rate()}}.}
 
 \item{...}{Arguments passed to the Python cadence constructor.}
 }
@@ -22,5 +27,13 @@ A data frame of per-second cadence estimates.
 Calculate cadence from initial contacts
 }
 \examples{
-\dontrun{calculate_cadence(wrist_imu, initial_contacts)}
+\donttest{
+component_imu <- wrist_imu[c("acc_x", "acc_y", "acc_z")]
+names(component_imu) <- c("acc_is", "acc_ml", "acc_pa")
+initial_contacts <- detect_initial_contacts(
+  component_imu, initial_contact_detector("zijlstra", version = "wrist")
+)
+cadence <- calculate_cadence(component_imu, initial_contacts, sample_rate = 100)
+head(cadence)
+}
 }

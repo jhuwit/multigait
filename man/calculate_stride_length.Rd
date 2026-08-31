@@ -8,7 +8,7 @@ calculate_stride_length(
   data,
   initial_contacts,
   calculator = stride_length_calculator(),
-  sampling_rate_hz = 100,
+  sample_rate = NULL,
   participant_metadata = list()
 )
 }
@@ -19,7 +19,8 @@ calculate_stride_length(
 
 \item{calculator}{A calculator returned by \code{\link[=stride_length_calculator]{stride_length_calculator()}}.}
 
-\item{sampling_rate_hz}{Sampling frequency in Hertz.}
+\item{sample_rate}{Sampling frequency in Hertz. When \code{NULL}, it is obtained
+from \code{data} with \code{\link[actibase:get_sample_rate]{actibase::get_sample_rate()}}.}
 
 \item{participant_metadata}{Named list of participant measurements passed to
 the selected Python calculator.}

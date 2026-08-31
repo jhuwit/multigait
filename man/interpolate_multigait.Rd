@@ -4,12 +4,13 @@
 \alias{interpolate_multigait}
 \title{Interpolate sensor time series}
 \usage{
-interpolate_multigait(data, sampling_rate_hz = 100, overlap_windows = FALSE)
+interpolate_multigait(data, sample_rate = NULL, overlap_windows = FALSE)
 }
 \arguments{
 \item{data}{A data frame, or list of data frames, to interpolate.}
 
-\item{sampling_rate_hz}{Sampling frequency in Hertz.}
+\item{sample_rate}{Sampling frequency in Hertz. When \code{NULL}, it is obtained
+from \code{data} with \code{\link[actibase:get_sample_rate]{actibase::get_sample_rate()}}.}
 
 \item{overlap_windows}{Whether source windows overlap.}
 }
