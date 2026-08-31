@@ -32,6 +32,23 @@ multigait_module <- function(convert = FALSE) {
   reticulate::r_to_py(x, convert = TRUE)
 }
 
+# Preserve the integer sample indices required by MultiGait's stride-length
+# implementations. `py_to_r()` represents pandas integer columns as R numeric
+# vectors, which otherwise become Python floats when passed back to Python.
+.as_python_initial_contacts <- function(x) {
+  if (reticulate::is_py_object(x)) return(x)
+  if (!is.data.frame(x) || !"ic" %in% names(x)) {
+    stop("`initial_contacts` must be a data frame with an `ic` sample-index column.",
+      call. = FALSE)
+  }
+  if (any(!is.finite(x$ic)) || any(x$ic != floor(x$ic))) {
+    stop("`initial_contacts$ic` must contain finite integer sample indices.",
+      call. = FALSE)
+  }
+  x$ic <- as.integer(x$ic)
+  .as_python_data(x)
+}
+
 .as_python_dict <- function(x, argument = deparse(substitute(x))) {
   if (reticulate::is_py_object(x)) return(x)
   if (!is.list(x) || (length(x) && (is.null(names(x)) || any(!nzchar(names(x)))))) {

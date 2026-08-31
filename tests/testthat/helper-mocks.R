@@ -61,6 +61,7 @@ mock_multigait <- function() {
   local_mocked_bindings(
     .multigait_import = function(module) modules[[module]],
     .as_python_data = function(x) x,
+    .as_python_initial_contacts = function(x) x,
     .as_python_dict = function(x, ...) x,
     .py_attribute = function(x, name) x[[name]],
     .env = asNamespace("multigait")

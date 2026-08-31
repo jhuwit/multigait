@@ -87,7 +87,7 @@ calculate_cadence <- function(data, initial_contacts, sample_rate = NULL, ...) {
   sample_rate <- .multigait_sample_rate(data, sample_rate)
   calculator <- do.call(.multigait_import("CAD")$Cadence, list(...))
   result <- calculator$calculate(.as_python_data(data),
-    initial_contacts = .as_python_data(initial_contacts), sampling_rate_hz = sample_rate)
+    initial_contacts = .as_python_initial_contacts(initial_contacts), sampling_rate_hz = sample_rate)
   .py_attribute(result, "cadence_per_sec_")
 }
 
@@ -106,7 +106,11 @@ stride_length_calculator <- function(algorithm = c("weinberg", "bylemans", "kim"
 #' Calculate stride length from initial contacts
 #'
 #' @param data Sensor samples as an R data frame or Python pandas data frame.
-#' @param initial_contacts Initial-contact data frame.
+#' @param initial_contacts An event data frame returned by
+#'   [detect_initial_contacts()] for the same recording. It contains one row per
+#'   detected initial contact (foot-strike); the required `ic` column gives the
+#'   contact location as an integer sample index. Do not supply manually created
+#'   times or contacts from a recording with a different `sample_rate`.
 #' @param calculator A calculator returned by [stride_length_calculator()].
 #' @param sample_rate Sampling frequency in Hertz. When `NULL`, it is obtained
 #'   from `data` with [actibase::get_sample_rate()].
@@ -120,7 +124,7 @@ calculate_stride_length <- function(data, initial_contacts,
                                     participant_metadata = list()) {
   sample_rate <- .multigait_sample_rate(data, sample_rate)
   args <- c(list(.as_python_data(data),
-    initial_contacts = .as_python_data(initial_contacts),
+    initial_contacts = .as_python_initial_contacts(initial_contacts),
     sampling_rate_hz = sample_rate), participant_metadata)
   result <- do.call(calculator$calculate, args)
   .py_attribute(result, "stride_length_per_sec_")
@@ -142,7 +146,7 @@ calculate_walking_speed <- function(data = NULL, cadence, stride_length,
   sample_rate <- .multigait_sample_rate(data, sample_rate)
   result <- .multigait_import("WS")$Ws()$calculate(
     data = if (is.null(data)) NULL else .as_python_data(data),
-    initial_contacts = if (is.null(initial_contacts)) NULL else .as_python_data(initial_contacts),
+    initial_contacts = if (is.null(initial_contacts)) NULL else .as_python_initial_contacts(initial_contacts),
     cadence_per_sec = .as_python_data(cadence),
     stride_length_per_sec = .as_python_data(stride_length),
     sampling_rate_hz = sample_rate)

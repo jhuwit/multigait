@@ -15,7 +15,11 @@ calculate_stride_length(
 \arguments{
 \item{data}{Sensor samples as an R data frame or Python pandas data frame.}
 
-\item{initial_contacts}{Initial-contact data frame.}
+\item{initial_contacts}{An event data frame returned by
+\code{\link[=detect_initial_contacts]{detect_initial_contacts()}} for the same recording. It contains one row per
+detected initial contact (foot-strike); the required \code{ic} column gives the
+contact location as an integer sample index. Do not supply manually created
+times or contacts from a recording with a different \code{sample_rate}.}
 
 \item{calculator}{A calculator returned by \code{\link[=stride_length_calculator]{stride_length_calculator()}}.}
 

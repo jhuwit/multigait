@@ -30,3 +30,12 @@ test_that("R sensor data are adapted when Python integration is enabled", {
 test_that("pipeline functions validate R-side inputs", {
   expect_error(run_multigait(data = NULL, pipeline = list()), "pipeline")
 })
+
+test_that("initial-contact sample indices remain integer when sent to Python", {
+  local_mocked_bindings(.as_python_data = function(x) x,
+    .env = asNamespace("multigait"))
+  contacts <- multigait:::.as_python_initial_contacts(data.frame(ic = c(1, 2)))
+  expect_type(contacts$ic, "integer")
+  expect_error(multigait:::.as_python_initial_contacts(data.frame(ic = 1.5)),
+    "integer sample indices")
+})
